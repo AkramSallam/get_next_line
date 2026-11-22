@@ -21,7 +21,7 @@ char    *update_storage(char *storage)
 		free(storage);
 		return (NULL);
 	}
-	new_storage = ft_strdup(temp + 1);
+	new_storage = ft_strdup(temp + 1); // might return null
 	free(storage);
 	return (new_storage);
 }
@@ -52,15 +52,32 @@ char	*extract_line(char *storage)
 char    *get_next_line(int fd)
 {
 	static char *storage;
+	char   buffer[BUFFER_SIZE + 1];
 	char	*line;
+	ssize_t	bytes_read;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (storage != NULL && ft_strchr(storage, '\n'))
 	{
-		line = extract_line(storage);
+		line = extract_line(storage); // might return null
 		storage = update_storage(storage);
 		return (line);
 	}
-	
+	while (1)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read < 0)
+		{
+			free(storage);
+			storage = NULL;
+			return (NULL);
+		}
+		if (bytes_read == 0)
+			break;
+		buffer[bytes_read] = '\0';
+		storage = ft_strjoin(storage, buffer); 
+		if (ft_strchr(storage, '\n'))
+			break;
+	}
 }
