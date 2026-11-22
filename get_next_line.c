@@ -10,10 +10,57 @@
 // 7) if there is nothing left in the static variable and EOF is reached, return NULL
 // 8) handle errors appropriately, such as invalid file descriptors or memory allocation failures
 
+char    *update_storage(char *storage)
+{
+    char *new_storage;
+	char *temp;
+
+	temp = ft_strchr(storage, '\n');
+	if (!temp || !temp[1])
+	{
+		free(storage);
+		return (NULL);
+	}
+	new_storage = ft_strdup(temp + 1);
+	free(storage);
+	return (new_storage);
+}
+
+char	*extract_line(char *storage)
+{
+	char *line;
+	size_t i;
+
+	i = 0;
+	line = malloc(ft_strlen(storage) + 1);
+	if (!line)
+		return (NULL);
+	while (storage[i] && storage[i] != '\n')
+	{
+		line[i] = storage[i];
+		i++;
+	}
+	if (storage[i] == '\n')
+	{
+		line[i] = storage[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
+}
+
 char    *get_next_line(int fd)
 {
 	static char *storage;
+	char	*line;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
+	if (storage != NULL && ft_strchr(storage, '\n'))
+	{
+		line = extract_line(storage);
+		storage = update_storage(storage);
+		return (line);
+	}
+	
 }
