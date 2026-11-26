@@ -61,7 +61,7 @@ char    *get_next_line(int fd)
 	if (storage != NULL && ft_strchr(storage, '\n'))
 	{
 		line = extract_line(storage); // might return null
-		storage = update_storage(storage);
+		storage = update_storage(storage); // might return null
 		return (line);
 	}
 	while (1)
