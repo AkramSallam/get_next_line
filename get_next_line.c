@@ -52,16 +52,16 @@ char	*extract_line(char *storage)
 char    *get_next_line(int fd)
 {
 	static char *storage;
-	char   buffer[BUFFER_SIZE + 1];
-	char	*line;
-	ssize_t	bytes_read;
+	char		buffer[BUFFER_SIZE + 1];
+	char		*line;
+	ssize_t		bytes_read;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (storage != NULL && ft_strchr(storage, '\n'))
 	{
-		line = extract_line(storage); // might return null
-		storage = update_storage(storage); // might return null
+		line = extract_line(storage); 
+		storage = update_storage(storage); 
 		return (line);
 	}
 	while (1)
@@ -80,4 +80,13 @@ char    *get_next_line(int fd)
 		if (ft_strchr(storage, '\n'))
 			break;
 	}
+	if (!storage || storage[0] == '\0')
+	{
+		free(storage);
+		storage = NULL;
+		return (NULL);
+	}
+	line = extract_line(storage);
+	storage = update_storage(storage);
+	return (line);
 }
