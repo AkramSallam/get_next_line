@@ -51,9 +51,10 @@ char	*extract_line(char *storage)
 
 char    *get_next_line(int fd)
 {
-	static char *storage;
+	static char	*storage;
 	char		buffer[BUFFER_SIZE + 1];
 	char		*line;
+	char		*tmp;
 	ssize_t		bytes_read;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -76,9 +77,13 @@ char    *get_next_line(int fd)
 		if (bytes_read == 0)
 			break;
 		buffer[bytes_read] = '\0';
-		storage = ft_strjoin(storage, buffer); 
+		tmp = ft_strjoin(storage, buffer);
+		free(storage);
+		storage = tmp;
+		if (!storage)
+			return (NULL);
 		if (ft_strchr(storage, '\n'))
-			break;
+			break ;
 	}
 	if (!storage || storage[0] == '\0')
 	{
