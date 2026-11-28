@@ -18,11 +18,10 @@ How it behaves:
 - it works with any `BUFFER_SIZE`
 - it stops reading as soon as it finds a `\n`, it doesn't read the whole file first
 
-Only `read`, `malloc` and `free` are allowed. No libft, no `lseek` and no global variables.
 
 Files:
 - `get_next_line.c`: the main function and its static helpers
-- `get_next_line_utils.c`: `ft_strlen`, `ft_strjoin`, `ft_strdup`, `ft_strchr`
+- `get_next_line_utils.c`: ft_strlen, ft_strjoin, ft_strdup, ft_strchr
 - `get_next_line.h`: prototypes and the default `BUFFER_SIZE`
 
 ## Instructions
@@ -82,19 +81,14 @@ read gives "ld\nfo"            storage = "world\nfo", it has a \n so we stop
 extract_line returns "world\n"
 update_storage keeps "fo"      for the next call
 ```
-
-Memory:
 - the read buffer is allocated with `malloc` and freed in every case (error, end of file, normal return). I did not use an array on the stack because a `BUFFER_SIZE` like 10000000 would crash it.
 - `ft_strjoin` creates a new string, so the old `storage` is freed right after the join and the result is checked for `NULL`.
 - if `read` fails or a `malloc` fails, `storage` is freed and set to `NULL`, so the next call starts clean.
 
-Why I chose this:
 - a static variable is the way to keep the state between calls without using a global variable, which is forbidden
 - stopping at the first `\n` follows the rule of reading as little as possible, and it also works with stdin because it doesn't wait for the end of the input
 - one string for `storage` keeps the code simple and fits in the Norm limits (25 lines per function, 5 functions per file)
 - it works with any `BUFFER_SIZE`: with 1 the loop just runs more times, with a big value one `read` can bring many lines and the rest stays in `storage` for the next calls
-
-The downside is that each `ft_strjoin` copies all of `storage` again, so with a very long line and a very small `BUFFER_SIZE` it gets slow. Another way is to keep the chunks in a linked list and join them only when a `\n` is found, but it needs more code and more things to free. I chose the simple way because it is fast enough for normal files.
 
 ## Resources
 
