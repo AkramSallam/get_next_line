@@ -10,7 +10,7 @@
 // 7) if there is nothing left in the static variable and EOF is reached, return NULL
 // 8) handle errors appropriately, such as invalid file descriptors or memory allocation failures
 
-char    *update_storage(char *storage)
+static char	*update_storage(char *storage)
 {
     char *new_storage;
 	char *temp;
@@ -26,7 +26,7 @@ char    *update_storage(char *storage)
 	return (new_storage);
 }
 
-char	*extract_line(char *storage)
+static char	*extract_line(char *storage)
 {
 	char *line;
 	size_t i;
@@ -49,49 +49,57 @@ char	*extract_line(char *storage)
 	return (line);
 }
 
-char    *get_next_line(int fd)
+static char *free_both(char *a, char *b)
 {
-	static char	*storage;
-	char		buffer[BUFFER_SIZE + 1];
-	char		*line;
-	char		*tmp;
-	ssize_t		bytes_read;
-	
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	if (storage != NULL && ft_strchr(storage, '\n'))
-	{
-		line = extract_line(storage); 
-		storage = update_storage(storage); 
-		return (line);
-	}
-	while (1)
+	free(a);
+	free(b);
+	return (NULL);
+}
+
+static char *read_to_storage(int fd, char *storage)
+{
+	char	*buffer;
+	char	*temp;
+	ssize_t	bytes_read;
+
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (free_both(NULL, storage));
+	bytes_read = 1;
+	while (bytes_read > 0 && !ft_strchr(storage, '\n'))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read < 0)
-		{
-			free(storage);
-			storage = NULL;
-			return (NULL);
-		}
-		if (bytes_read == 0)
-			break;
+			return (free_both(buffer, storage));
 		buffer[bytes_read] = '\0';
-		tmp = ft_strjoin(storage, buffer);
+		temp = ft_strjoin(storage, buffer);
 		free(storage);
-		storage = tmp;
+		storage = temp;
 		if (!storage)
-			return (NULL);
-		if (ft_strchr(storage, '\n'))
-			break ;
+			return (free_both(buffer, NULL));
 	}
-	if (!storage || storage[0] == '\0')
+	free(buffer);
+	return (storage);
+}
+
+char    *get_next_line(int fd)
+{
+	static char	*storage;
+	char	*line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	storage = read_to_storage(fd, storage);
+	if (!storage)
+		return (NULL);
+	line = NULL;
+	if (*storage)
+		line = extract_line(storage);
+	if (!line)
 	{
-		free(storage);
-		storage = NULL;
+		storage = free_both(storage, NULL);
 		return (NULL);
 	}
-	line = extract_line(storage);
 	storage = update_storage(storage);
 	return (line);
 }

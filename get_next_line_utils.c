@@ -87,6 +87,8 @@ char	*ft_strchr(const char *s, int c)
 {
 	char	val;
 
+	if (!s)
+		return (NULL);
 	val = c;
 	while (*s)
 	{
