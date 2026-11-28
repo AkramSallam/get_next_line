@@ -98,7 +98,6 @@ The downside is that each `ft_strjoin` copies all of `storage` again, so with a 
 
 ## Resources
 
-- `man 2 read`, `man 3 malloc`, `man 3 free`
 - [Static variables in C (GeeksforGeeks)](https://www.geeksforgeeks.org/static-variables-in-c/)
 - [File descriptor (Wikipedia)](https://en.wikipedia.org/wiki/File_descriptor)
 - [Valgrind manual](https://valgrind.org/docs/manual/manual.html)
