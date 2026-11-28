@@ -45,7 +45,7 @@ static char *free_both(char *a, char *b)
 	free(b);
 	return (NULL);
 }
-// hello
+
 static char *read_to_storage(int fd, char *storage)
 {
 	char	*buffer;
